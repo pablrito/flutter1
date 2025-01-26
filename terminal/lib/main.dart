@@ -62,10 +62,13 @@ class _SignalRDemoState extends State<SignalRDemo> {
     });
 
     // Add a listener for messages
-    _hubConnection.on("ReceiveMessage", (message) {
+    _hubConnection.on("ReceiveMessage", (message) async {
       setState(() {
         _receivedMessage = message?[0] ?? "No message content";
       });
+
+      
+
     });
 
     // Start the connection
@@ -83,7 +86,7 @@ class _SignalRDemoState extends State<SignalRDemo> {
 
   Future<void> _sendMessage(String message) async {
     if (_hubConnection.state == HubConnectionState.connected) {
-      await _hubConnection.invoke("SendMessage", args: [message]);
+      await _hubConnection.invoke("Notification", args: [_hubConnection.connectionId,message]);
     }
   }
 
@@ -91,7 +94,7 @@ class _SignalRDemoState extends State<SignalRDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Azure SignalR Demo'),
+        title: const Text('Terminal'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -99,12 +102,13 @@ class _SignalRDemoState extends State<SignalRDemo> {
           children: [
             Text("Status: $_status"),
             const SizedBox(height: 20),
-            Text("Received Message: $_receivedMessage"),
-            const SizedBox(height: 20),
             TextField(
               decoration: const InputDecoration(labelText: "Enter a message"),
               onSubmitted: _sendMessage,
             ),
+            const SizedBox(height: 20  ),
+            Text("Received Message: $_receivedMessage"),
+           
           ],
         ),
       ),
